@@ -242,9 +242,10 @@
 
 ## 5.6(실습) 댓글 컴포넌트 만들기
 - 프로젝트 디렉토리에서 /src/chaptor_05 디렉 생성.
-- 그 안에 Comment.jsx 파일 생성
-
-- 다음으로 CommentLisx.jsx파일 생성
+- 그 안에 Comment.jsx 파일 생성 <br>
+https://github.com/Raebagi/react1-1/blob/c7104dfeb4312fde4b2a9727affb695ab694685a/test-app/src/chaptor05/Comment.jsx#L1-L49
+- 다음으로 CommentLisx.jsx파일 생성 <br>
+https://github.com/Raebagi/react1-1/blob/c7104dfeb4312fde4b2a9727affb695ab694685a/test-app/src/chaptor05/CommentList.jsx#L1-L12
 
 ## 6.1 state
 #### 1. State란?
@@ -273,6 +274,8 @@
 09  });
 ```
 ![zjavhzzz](https://github.com/Raebagi/react1-1/assets/144668955/de58ce1c-1700-40cf-b33b-57c85ffe35fe)
+
+
 
 ## 6.2 생명주기에 대해 알아보기
 
