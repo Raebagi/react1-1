@@ -1,10 +1,290 @@
 # 박래현 202030111
 
-* [1주차 강의 정리](#3월-13일-강의-내용-정리)<br>
-* [2주차 강의 정리](#3월-20일-강의-내용-정리)<br>
-* [3주차 강의 정리](#3월-27일-강의-내용-정리)<br>
+* [1주차 강의 정리](#3월-13일-강의-내용-정리-1주차)<br>
+* [2주차 강의 정리](#3월-20일-강의-내용-정리-2주차)<br>
+* [3주차 강의 정리](#3월-27일-강의-내용-정리-3주차)<br>
+* [4주차 강의 정리](#4월-3일-강의-내용-정리-4주차)<br>
 
-# 3월 27일 강의 내용 정리
+# 4월 3일 강의 내용 정리 (4주차)
+
+## 컴포넌트에 대해 알아보기
+
+- 2장에서 설명한 바와 같이 리액트는 컴포넌트 기반의 구조를 가짐.
+- 컴포넌트 구조라는 것은 작은 컴포넌트가 모여 큰 컴포넌트를 구성하고, 다시 이런 컴포넌트들이 모여서 전체 페이지를 구성한다는 것을 의미.
+- 컴포넌트는 자바스크립트 함수처럼 입력과 출력이 있다는 면에서 유사함.
+- 다만 입력은 Props가 담당하고, 출력은 리액트 엘리먼트의 형태로 출력됩니다.
+- 엘리먼트를 필요한 만큼 만들어 사용함
+
+## Props에 대해 알아보기
+
+### 1. Props의 개념
+
+- props는 prop(property : 속성, 특성)의 준말.
+- 이 props가 바로 컴포넌트의 속성임.
+- 컴포넌트에 어떤 속성, props를 넣느냐에 따라 속성이 다른 엘리먼트가 출력.
+- props는 컴포넌트에 전달할 다양한 정보를 담고 있는 자바스크립트 객체.
+- 에어비앤의의 예도 마찬가지
+
+![props](https://github.com/Raebagi/react1-1/assets/144668955/b1620736-81f4-43ed-8352-4615f705da03)
+
+### 2. Props의 특징
+
+- 읽기 전용, 변경할 수 없음.
+- 속성이 다른 엘리먼트를 생성하려면 새로운 props를 컴포넌트에 전달하면 됨.
+
+### Pure 함수 vs Impure함수
+
+- Pure함수는 인수로 받은 정보가 함수 내부에서도 변하지 않는 함수.
+- Impure함수는 인수로 받은 정보가 함수 내부에서 변하는 함수입니다.
+
+```js
+01  // pure함수
+02  // input을 변경하지 않으며 같은 input에 대해서 항상 같은 output을 리턴
+03  function sum(a,b) {
+04      return a + b;
+05  }
+```
+
+```js
+01  //impure 함수
+02  //input을 변경함
+03  function withdraw(account, amount) {
+04    account.total -= amount;
+05  }
+```
+
+### 3. props의 사용법
+- JSX에서는 key-value쌍으로 props를 구성
+
+```js
+01  function App(props){
+02    return (
+03      <profile
+04        name = "소플"
+05        introduction="안녕하세요, 소플입니다."
+06        viewCount={1500}
+07      />
+08    );
+09  }
+```
+#### 위의 코드는
+
+1. App컴포넌트에서 props를 인자로 받아,
+2. 내부의 profile 컴포넌트로 전달해서 name, introduction, viewCount에 각각 속성을 할당하는,
+3. 이 때 전달되는 props는 다음과 같은 자바 스크립트 객체
+
+```js
+01  {
+02    name: "소플",
+03    introduction: "안녕하세요, 소플입니다.",
+04    viewCount : 1500
+05  }
+```
+
+- JSX에서는 중괄호를 사용하면 JS코드를 넣을 수 있음.
+- 다음 코드처럼 props를 통해서 value를 할당 할 수 있고, 직접 중괄호를 사용하여 할당할 수 있음.
+
+```js
+01  function App(props){
+02    return (
+03      <Layout
+04        width={2560}
+05        height={1440}
+06        header={
+07          <Header title="소플의 블로그입니다." />
+08        }
+09        footer={
+10          <Footer />  
+11        }
+12      />
+13    );
+14  }
+```
+
+- JSX를 사용하지 않는 경우 props의 전달 방법은 createElement()함수를 사용
+
+```js
+01  React.creatElement(
+02    type,
+03    [props],
+04    [...children]
+05  )
+```
+- createElement()함수의 두번 째 매개변수가 바로 props입니다.
+- JSX를 사용하지 않으면 다음과 같이 코드를 작성할 수 있음
+
+```js
+01 React.createElement(
+02    Profile,
+03    {
+04      name: "소플",
+05      introduction: "안녕하세요, 소플입니다."
+06      viewCount: 1500
+07    },
+08    null  
+09  );
+```
+
+## 컴포넌트 만들기
+
+### 1. 컴포넌트의 종류
+
+- 리액트 초기 버전을 사용할 때는 클래스형 컴포넌트를 주로 사용
+- 이후 Hook이라는 개념이 나오며 최근에는 함수형 컴포넌트를 주로 사용
+- 예전에 작성된 코드나 문서들이 클래스형 컴포넌트를 사용하고 있기 때문에,
+- 클래스형 컴포넌트와 컴포넌트의 생명주기에 관해서도 공부해두어야함
+
+![컴컴](https://github.com/Raebagi/react1-1/assets/144668955/03aa4f29-9056-4334-b54b-9a3f5e954069)
+
+### 2. 함수형 컴포넌트
+
+- Welcome컴포넌트는 props를 받아, 받은 props중 name키의 값을 "안녕", 뒤에 넣어 반환.
+
+```js
+01  function Welcome(props){
+02    return <h1>안녕, {props.name}</h1>;
+03  }
+```
+
+### 3. 클래스형 컴포넌트
+
+- Welcome컴포넌트는 React.Component class로 부터 상속받아 선언.
+```js
+01    class Welcome exends React.component{
+02      render() {
+03        return <h1>안녕, {this.props.name}</h1>;
+04      }
+05    }
+```
+
+### 4. 컴포넌트 이름 짓기
+
+- 이름은 항상 대문자로 시작
+- 왜냐하면 리액트는 소문자로 시작하는 컴포넌트를 DOM태그로 인식. html tag
+#### * 컴포넌트 파일 이름과 컴포넌트 이름은 같게함.
+
+### 5. 컴포넌트의 렌더링
+
+- 렌더링의 과정은 다음 코드와 같음
+
+```js
+01  function Welcome(props){
+02    return <h1>안녕, {props.name}</h1>;
+03  }
+04
+05  const element = <Welcome name="인제" />;
+06  ReactDom.render(
+07    element,
+08    document.getElementById('root')
+09  );
+```
+
+## 5.4 컴포넌트 합성
+
+- 컴포넌트 합성은 여려개의 컴포넌트를 합쳐서 하나의 컴포넌트를 만드는 것
+- 리액트에서는 컴포넌트 안에 또 다른 컴포넌트를 사용할 수 있기 때문에, 복잡한 화면을 여러 개의 컴포넌트로 나누어 구현할 수 있음.
+- 다음 코드에서는 props의 값을 다르게 해서 welcome 컴포넌트를 여러 번 사용함.
+
+```js
+01  function Welcome(props){
+02    return <h1>Hello, {props.name}</h1>;
+03  }
+04
+05  function App(props) {
+06    return (
+07      <div>
+08        <Welcome name = "Mike" />
+09        <Welcome name = "Steve" />
+10        <Welcome name = "Jane" />
+11      </div>
+12    )
+13  }
+14
+15  ReactDOM.Render(
+16    <App />,
+17    document.getElementById('root')  
+18  );
+```
+
+![컴포합성2](https://github.com/Raebagi/react1-1/assets/144668955/57e76ee2-e16b-4f35-84bf-f5e1dee9ec2e)
+
+## 5.5 컴포넌트 추출
+
+- 복잫반 컴포넌트를 쪼개서 여러 개의 컴포넌트로 나눌 수 있음
+- 큰 컴포넌트에서 일부를 추출해서 새로운 컴포넌트를 만든느 것.
+#### *실무에서는 처음부터 1개의 컴포넌트에 하나의 기능만 사용하도록 설계하는것이 좋음.
+
+- Comment는 댓글 표시 컴포넌트입니다.
+- 내부에는 이미지, 이름, 댓글과 작성일이 포함되어 있음.
+- 첫 번째로 이미지 부분을 Avatar 컴포넌트로 출력 해봄.
+
+```js
+01  function Avatar(props){
+02    return(
+03      <img className="avatar"
+04        src = {props.user.avatarUrl}
+05        alt = {props.user.name}
+06      />  
+07    );
+08  }
+```
+![캡처2](https://github.com/Raebagi/react1-1/assets/144668955/d800d9f2-7511-4343-899d-4914659c4847)
+
+- 두 번째로 사용자 정보 부분을 추출함.
+- 컴포넌트 이름은 UserInfo로 함. React 컴포넌트 이름은 Camel notation을 사용.
+
+- 추출 후 다시 결합한 UserInfo를 Comment 컴포넌트에 반영하면 다음과 같은 모습이 됨.
+- 처음에 비해 가독성이 높아진 것을 확인.
+
+![zjavh](https://github.com/Raebagi/react1-1/assets/144668955/0695959a-6d1c-4ef0-b17c-4e60b7463950)
+
+#### * 기본적으로는 한 컴포넌트에 하나의 기능을 수행하도록 설계하는 것이 바람직함
+
+## 5.6(실습) 댓글 컴포넌트 만들기
+- 프로젝트 디렉토리에서 /src/chaptor_05 디렉 생성.
+- 그 안에 Comment.jsx 파일 생성
+
+- 다음으로 CommentLisx.jsx파일 생성
+
+## 6.1 state
+#### 1. State란?
+- State는 리액트 컴포넌트의 상태를 의미함.
+- 상태의 의미는 정상 or 비정상이 아니라 컴포넌트의 데이터를 의미
+- 정확히는 컴포넌트의 변경가능한 데이터를 의미
+- State가 변하면 다시 렌더링이 되기 때문에 렌더링과 관련된 값만 state에 포함.
+
+#### 2. State의 특징
+
+- 리액트만의 특별한 형태가 아닌 자바스크립트의 객체.
+- 예의 LikeButton은 class컴포넌트임.
+- constructor 은 생성자이고 그 안에 있는 this.state가 현 컴포넌트의 state임
+- state는 변경이 가능하나 직접 수정 x
+- 불가능 하다고 생각하는것이 좋음.
+- state를 변경하고자 할 때는 setstate()함수 사용
+```js
+01  //state를 직접 수정(잘못된 사용범)
+02  this.state = {
+03    name : "Inje"
+04  };
+05
+06  // setState 합수를 통한 수정
+07  this.setState({
+08    name : "Inje"
+09  });
+```
+![zjavhzzz](https://github.com/Raebagi/react1-1/assets/144668955/de58ce1c-1700-40cf-b33b-57c85ffe35fe)
+
+## 6.2 생명주기에 대해 알아보기
+
+- 생명주기는 컴포넌트의 생성 시점, 사용 시점, 종료 시점을 나타냄.
+- constructor가 실행  되며 컴포넌트 생성.
+- 생성 직후 componentDidMount() 함수 호출
+- 컴포넌트가 소멸하기 전까지 여러번 렌더링
+- 렌더링은 props, setState(), forceUpdate()에 의해 상태가 변경되면 이루어짐.
+- 그리고 렌더링이 끝나면 componentDinUpdate()함수 호출
+- 마지막으로 컴포넌트 언마운트 되면 componentWillUnmount() 함수가 호출.
+![safsaf](https://github.com/Raebagi/react1-1/assets/144668955/502cf9ab-6fb7-45f3-aed8-0603f9f515f2)
+# 3월 27일 강의 내용 정리 (3주차)
 
 ## JSX(JavaScript XML)란?
 
@@ -12,7 +292,7 @@
 - [JSX](https://ko.reactjs.org/docs/introducing-jsx.html,"JSX 소개")
  
 ```js
-const element = <h1>Hello, world!</h1>;
+01 const element = <h1>Hello, world!</h1>;
 ```
 
 ## JSX의 역할
@@ -144,7 +424,7 @@ import Library from './chaptor03/Library';
 12  setInterval(tick,1000);
 ```
 
-# 3월 20일 강의 내용 정리
+# 3월 20일 강의 내용 정리 (2주차)
 
 *[목차](#박래현-202030111)
 
@@ -165,7 +445,7 @@ import Library from './chaptor03/Library';
 - npx create-react-app test-app
 - npm start
 
-## 3월 13일 강의 내용 정리
+## 3월 13일 강의 내용 정리 (1주차)
 *[목차](#박래현-202030111)
 
 ### GIT 명령어 정리
