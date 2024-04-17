@@ -22,9 +22,9 @@ class NotificationList extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
+         this.state = {
             notifications: [],
-        };
+         };
     }
 
     componentDidMount() {
@@ -37,9 +37,9 @@ class NotificationList extends React.Component {
                     notifications: notifications,
                 });
             } else {
-                this.setState({
-                    notifications: [],
-                });
+                // this.setState({
+                //     notifications: [],
+                // });
                 clearInterval(timer);
             }
         }, 1000);
