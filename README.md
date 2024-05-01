@@ -169,9 +169,142 @@ const refContainer = useRef(초깃값);
 - 두번 째 규칙은 리액트 함수형 컴포넌트에서만 훅을 호출해야 한다는 것임.
 - 따라서 일반 자바스크립트 함수에서 훅을 호출하면 안됨.
 - 훅은 리액트의 함수형 컴포넌트 혹은 직접 만든 커스텀 훅에서만 호출할 수 있음.
+- 두 번째 규칙은 함수형 컴포넌트에서만 훅을 호출해야 함.
+- 따라서 일반 자바스크립트 함수에서 훅을 호출하면 안 됨.
+- 훅은 함수영 컴포넌트 혹은 직접 만든 커스텀 훅에서만 호출 가능
 
+### 7.8 나만의 훅 만들기
 
+- 필요하다면 직접 훅을 만들어 쓸 수도 있음. 이것을 커스텀 훅이라 함
 
+1. 커스텀 훅을 만들어야 하는 상황
+에제 UserStatus 컴포넌트는 isOnline이라는 state에 따라서 사용자의 상태가 온라인인지 아닌지를 텍스트로 보여주는 컴포넌트
+
+```js
+01  import React, { useState, useEffect} from "react";
+02
+03  function UserStatus(props){
+04    const [isOnline, setIsOnline] = useState(null);
+05
+06    useEffect(() => {
+07      function handleStatusChange(status){
+08        setIsOnline(status.isOnline);
+09      }
+10
+11      ServerAPI.subscribeUserStatus(props.user.id, handleStatusChange);
+12      return() => {
+13        ServerAPI.unsubscribeUserStatus(props.user.id, handleStatusChange);
+14      }  
+15    });
+16
+17    if(isOnline === null) {
+18      return '대기중...';
+19    }
+20    return isOnline ? '온라인' : '오프라인';
+21  }
+```
+
+2. 커스텀 훅 추출하기
+
+- use로 시작하는 훅을 만들고, 내부에서 다른 훅을 호출하면 됨.
+- 아래 코드는 중복되는 로직을 useUserStatus()라는 커스텀 훅으로 추출해낸 것
+```js
+01  import React, { useState, useEffect} from "react";
+02
+03  function useUserStatus(props){
+04    const [isOnline, setIsOnline] = useUserState(null);
+05
+06    useEffect(() => {
+07      function handleStatusChange(status){
+08        setIsOnline(status.isOnline);
+09      }
+10
+11      ServerAPI.subscribeUserStatus(userId, handleStatusChange);
+12      return() => {
+13        ServerAPI.unsubscribeUserStatus(userId, handleStatusChange);
+14      } ;
+15    });
+16
+17    return isOnline;
+18  }
+```
+
+3. 커스텀 훅 사용하기
+- 2에서 작성했던 코드를 사용자 훅을 사용해서 수정하면 다음과 같음.
+```js
+01  function UserStatus(props){
+02    const isOnline =useUserStatus(props.user.id)
+03
+04    if (isOnline === null){
+05      return '대기중...';
+06    }
+07    return isOnline ? '온라인' : '오프라인';
+08  }
+09
+10  function UserListItem(props){
+11    const isOnline = useUserStatus(props.user.id);
+12
+13    return(
+14        <li style == {{ color: isOnline ? 'green': 'black'}}>
+15          {props.user.name}
+16        </li>
+17    );
+18  }
+```
+
+### 8.1 이벤트 처리하기
+
+- DOM에서 클릭 이벤트를 처리하는 예제 코드
+```js
+01  <button onclick = "activate()">
+02    Activate
+03  </button>
+```
+
+- React에서 클릭 이벤트를 처리하는 예제코드
+```js
+01  <button onClick = {activate}>
+02    Activate
+03  </button>
+```
+
+- 둘의 차이점은
+1) 이벤트 이름이 onclick에서 onClick로 변경. (Camel Case)
+2) 전달하려는 함수는 문자열에서 함수 그대로 전달.
+
+- 이벤트가 발생했을 때 해당 이벤트를 처리하는 함수를 "이벤트 핸들러(Event Handler)"라고 함. 또는 이벤트가 발생하는 것을 계속 듣고 있다는 의미로 "이벤트 리스너(Event Listner)"라고 부르기도 함.
+
+- 이벤트 핸들러 추가하는 방법은?
+- 버튼을 클릭하면 이벤트 핸들러 함수인 handleClick()함수를 호출하도록 되어있음
+- bind를 사용하지 않으면 this,handleClick은 글로벌 스코프에서 호출되어, undefined으로 사용할 수 없기 때문
+- bind를 사용하지 않으려면 화살표 함수 사용
+- 하지만 클래스 컴포넌트는 이제 거의 사용하지 않기 때문에 이 내용은 참고만 함
+```js
+01  class Toggle extends React.Component{ 
+02    construnctor(props){
+03        super(props);
+04
+05        this.state = {isToggleOn : true};
+06
+07
+08        this.handleClick = this.handleClick.bind(thils);
+09      }
+10
+11      handleClick(){
+12        this.setState(prevState => ({
+13          isToggleOn: !prevState.isToggleOn
+14      }));
+15    }
+16
+17    render() {
+18      return (
+19        <button onClick = {this.handleClick}>
+20          {this.state.isToggleOn ? '켜짐' : '꺼짐'}
+21        </button>  
+22      );
+23    }
+24  }
+```
 # 4월 3일 강의 내용 정리 (4주차)
 
 ## 컴포넌트에 대해 알아보기
