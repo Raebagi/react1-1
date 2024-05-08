@@ -5,173 +5,132 @@
 * [3주차 강의 정리](#3월-27일-강의-내용-정리-3주차)<br>
 * [4주차 강의 정리](#4월-3일-강의-내용-정리-4주차)<br>
 * [5주차 강의 정리](#4월-17일-강의-내용-정리-5주차)<br>
+* [7주차 강의 정리](#5월-1일-강의-내용-정리-7주차)<br>
 
-# 4월 17일 강의 내용 정리 (5주차)
+# 5월 8일 강의 내용 정리 (8주차)
 
-## 훅
+### 8.2 Arguments 전달하기
 
-### 7.1 훅이란?
-
-- 클래스형 컴포넌트에서는 생성자(constructor)에서 state를 정의하고, setState() 함수를 통해 state를 업데이트.
-- 예전에 사용하던 함수형 컴포넌트는 별도로 state를 정의하거나, 컴포넌트의 생명주기에 맞춰서 어떤 코드가 실행되도록 할 수 없었습니다.
-- 함수형 컴포넌트에서도 state나 생명주기 함수의 기능을 사용하게 해주기 위해 추가된 기능이 바로 훅(Hook).
-- 함수형 컴포넌트도 훅을 사용하여 클래스형 컴포넌트의 기능을 모두 통일하게 구현할 수 있게 됨.
-- Hook이란 state와 생명주기 기능에 갈고리를 걸어 원하는 시점에 정해진 함수를 실행되도록 만든 함수.
-- 훅의 이름은 모두 'use'로 시작
-- 사용자 정의 훅(custom hook)을 만들 수 있으며, 이 경우에 이름은 'use'로 시작할 것을 권장
-
-### 7.2 useState
-
-- useState는 함수형 컴포넌트에서 state를 사용하기 위한 Hook임.
-- 다음 예제는 버튼을 클릭할 때마다 카운트가 증가하는 함수형 컴포넌트.
-- 하지만 증가는 가능하지만 증가할 때마다 재 렌더링은 일어나지 않음.
-- 이럴 때 state를 사용해야 하지만 함수형은 없기에 useState() 사용.
+- 함수를 정의할 때는 파라미터(parameter)혹은 매개변수, 함수를 사용할 때는 아규먼트(argument)혹은 인수 라고 부름.
+- 이벤트 핸들러에 매개변수를 전달해야 하는 경우도 있음.
 
 ```js
-01  import React, {useState} from "react";
-02
-03  function Counter(props){
-04    const [count, setCount] = useState(0);
+01  <button onClick = {(event) => this.deleteItem(id,event)}>삭제하기</button>
+02  <button onClcik = {this.deleteItem.bind(this, id)}>삭제하기</button>
+```
+- 위의 코드는 모두 동일한 역할을 하지만 하나는 화살표 함수를, 다른 하나는 bind를 사용했음
+- event라는 매개변수는 리액트의 이벤트 객체를 의미
+- 두 방법 모두 첫 번째 매개변수는 id이고 두 번째 매개변수로 event가 전달
+- 첫 번째 코드는 명시적으로 event를 매개변수로 넣어주었고, 두 번째 코드는 id 이후 두 번째 매개변수로 event가 자동 전달됨.(이 방법은 클래스형에서 사용)
+- 함수형 컴포넌트에서 이벤트 핸들러에 매개변수를 전달할 때는 254페이지 코드와 같이 함.
+
+```js
+01  function MyButton(props){
+02    const handleDelete = (id, event) => {
+03      console.log(id, event.target);
+04    };
 05
-06    return (
-07      <div>
-08        <p> 총 {count}번 클릭했습니다.</p>
-09        <button onClick ={() => count++}>
-10            클릭
-11        </button>
-12      </div>
-13    );
-14  }
+06    return(
+07      <button onClcik ={(event) => handleDelete(1, event)}>삭제하기</button>
+08    )
+09  }
 ```
 
-### 7.3 useEffect
+### 8.3 (실습)클릭 이벤트 처리하기
+1. ConfirmButton 컴포넌트 만들기.
+2. 클래스 필드 문법 사용하기.
+3. 함수 컴포넌트로 변경하기.
 
-- useState와 함께 가장 많이 사용하는 Hook임
-- 이 함수는 사이드 이펙트를 수행하기 위한 것
-- 영어로 side effect는 부작용을 의미함, 일반적으로 프로그래밍에서 사이드 이펙트는 '개발자가 의도하지 않은 코드가 실행되며 버그가 발생하는 것'을 뜻함
-- 하지만 리액트에서는 효과 또는 영향을 뜻하는 effect의 의미에 가까움
-- 예를 들어 서버에서 데이터를 받아오거나 수동으로 DOM을 변경하는 등의 작업을 의미
-- 이 작업을 이펙트라고 부르는 이유는 이 작업들이 다른 컴포넌트에 영향을 미칠 수 있으며, 렌더링중에는 작업이 완료될 수 없기 때문임. 렌더링이 끝난 이후에 실행되어야 하는 작업들임.
-- 클래스 컴포넌트의 생명주기 함수와 같은 기능을 하나로 통합한 기능을 제공
-- 저자는 useEffect가 side effect가 아니라 effect에 가깝다고 설명하지만, 이것은 부작용의 의미를 잘못 해석해서 생긴 오해이다. 부작용의 부를 不(아닐 부)로 생각했기 때문이다
-- side Effect는 '원래의 용도 혹은 목적의 효과외에, 부수적으로 다른 효과가 있는 것'을 뜻함
-- 결국 sideEffect는 렌더링 외에 실행해야 하는 부수적인 코드를 말함.
-- 예를 들면 네트워크 리퀘스트, DOM 수동 조작, 로깅등은 정리(clean-up)가 필요 없는 경우들
-- useEffect()함수는 다음과 같이 사용
-- 첫 번째 파라미터는 이펙트 함수가 들어가고, 두 번째 파라미터로는 의존성 배열이 들어감.
+### 9.1 조건부 렌더링이란?
+
+- 여기서 조건이란 우리가 알고있는 조건문의 조건임.
 ```js
-01 useEffect(이펙트 함수, 의존성 배열);
-```
-- 의존성 배열은 이펙트가 의존하고 있는 배열로, 배열 안에 있는 변수중에 하나라도 값이 변경되었을 때 이펙트 함수가 실행됨.
-- 이펙트 함수는 처음 컴포넌트가 렌더링 된 이후, 그리고 재 렌더링 이후에 실행됨.
-- 만약 이펙트 함수가 마운트와 언마운트 될 때만 한 번씩 실행되게 하고 싶으면 빈 배열을 넣으면 됨. 이 경우 props나 state에 있는 어떤 값에도 의존하기 않기 때문에 여러 번 실행되지 않음.
-
-- componentUseWill
-![image](https://github.com/Raebagi/react1-1/assets/144668955/7aed0502-454f-40e7-ad2f-0d9026f49322)
-
-```js
-  useEffect(() => {
-    // 컴포넌트가 마운트 된 이후,
-    // 의존성 배열에 있는 변수들 중 하나라도 값이 변경되었을 때 실행
-    // 의존성 배열에 빈 배열을 넣으면 마운트와 언마운트시에 단 한번씩만 실행됨
-    // 의존성 배열 생략 시 컴포넌트 업데이트 시마다 실행됨
-    ...
-
-    return () => {
-      // 컴포넌트가 마운트 해제되기 전에 실행됨
-      ...
+  function Greeting(props){
+    const isLoggedIn = props.isLoggedIn;
+    if(isLoggedIn){
+      return <UserGreeting/>
     }
-  }, [의존성 변수1, 의존성 변수2, ...]
-  );
+    return <GusetGreeting/>;
+  }
 ```
+- props로 전달 받은 isLoggedIn이 true면 UserGreeting을, false면 GuestGreeting을 반환
 
 
-### 7.4 usMemo
+### 9.2 엘리먼트 변수
 
-- useMemo()훅은 Memoized value를 리턴하는 훅.
-- 이전 계산값을 갖고있기 때문에 연산량이 많은 작업의 반복을 피함.
-- 이 훅은 렌더링이 일어나는 동안 실행됨.
-- 따라서 렌더링이 일어나는 동안 실행되선 안될 작업을 넣으면 안됨.
-- 예를 들면 useEffect에서 실행되어야 할 사이드 이펙트같은 것.
-- 정리하자면
+- 렌더링해야 될 컴포넌트를 변수처럼 사용하는 방법이 엘리먼트 변수
+- 272페이지 코드처럼 state에 따라 button 변수에 컴포넌트의 객체를 저장하여 return문에 사용.
 ```js
-  const MemoizedValue = useMemo(
-    () => {
-    // 연산량이 높은 작업을 수행하여 결과를 반환
-    return computeExpensiveValue(의존성 변수1, 의존성 변수2);
-  },
-  [의존성 변수1, 의존성 변수2]
-  );
-```
-- 다음 코드와 같이 의존성 배열을 넣지 않을 경우, 렌더링이 일어날 때마다 매번 함수가 실행됨.
-- 따라서 의존성 배열을 넣지 않는 것은 의미가 없음.
-- 만약 빈 배열을 넣게되면 컴포넌트 마운트 시에만 함수가 실행됨.
-```js
-01  const MemoizedValue = useMemo(
-02    () =>  computeExpensiveValue
-03  );
+  let button;
+  if(isLoggedIn){
+    button = <LogoutButton onClick = {handleLogoutClick}/>;
+  }else{
+    button = <LoginButton onClick = {handleLoginClick}/>;
+  }
+
+  return(
+    <div>
+      <Greeting isLoggedIn={isLoggedIn}/>
+      {button}
+    </div>
+  )
 ```
 
-### 7.5 useCallback
+### 9.3 인라인 조건
 
-- useCallback() 훅은 useMemo()와 유사한 역할을 합니다.
-- 차이점은 값이 아닌 함수를 반환한다는 점입니다.
-- 의존성 배열을 파라미터로 받는 것은 useMemo와 동일함.
-- 파라미터로 받은 함수를 콜백이라고 함.
-- useMemo와 마찬가지로 의존성 배열 중 하나라도 변경되면 콜백함수를 반환
+- 필요한 곳에 조건문을 직접 넣어 사용하는 방법.
+
+1. 인라인if
+- if문을 직접 사용하지 않고, 동일한 효과를 내기 위해 && 논리 연산자를 사용함.
+- &&는 and연산자로 모든 조건이 참일때만 참.
+- 첫 조건이 거짓이면 두번 째 조건은 판단할 필요 x 단추경가.
 
 ```js
-  const MemoizedValue = useCallback(
-    () => {
-      doSomething(의존성 변수1, 의존성 변수2);
-    },
-    [의존성 변수1, 의존성 변수2]
-  );
+01  {unreadMessages.length > 0 &&
+02    <h2>
+03      현재 {unreadMessage.length}개의 읽지않은 메시지가 있습니다.
+04    </h2>
+05  }
 ```
+- 판단만 하지 않고 결과 값 그대로 리턴.
 
-### 7.6 useRef
+2. 인라인 if-else
+- 삼항연산자를 사용
+- 문자열이나 엘리먼트를 넣어서 사용할 수 있음.
 
-- useRef() 혹은 레퍼런스를 사용하기 위한 훅.
-- 레퍼런스란 특정 컴포넌트에 접근할 수 있는 객체를 의미
-- useRef() 훅은 바로 이 레퍼런스 객체를 반환함.
-- 레퍼런스 객체에는 .current라는 속성이 있는데, 이것은 현재 참조하고 있는 엘리먼트를 의미함.
 ```js
-const refContainer = useRef(초깃값);
+  function UserStatus(props){
+    return(
+      <div>
+        이 사용자는 현재 <br>{props.isLoggedIn ? '로그인' : '로그인 하지 않은'}</br>상태입니다.
+      </div>
+    )
+  }
 ```
-- 이렇게 반환된 레퍼런스 객체는 컴포넌트의 라이프타임 전체에 걸쳐서 유지됨.
-- 즉, 컴포넌트가 마운트 해제 전까지는 계속 유지된다는 의미.
-
-- 예시
 ```js
-01  import React, {useRef} from "react"
-02  
-03  export default function FocusButton(props){
-04    const inputElem = useRef(null)
-05
-06    const onButtonClick = () => {
-07      inputElem.current.focus()
-08    }
-09    return(
-10        <>
-11          <input ref = {inputElem} type = "text"/>
-12          <button onClick = {onButtonClick}>Focus the input</button>
-13        </>
-14    )
-15  }
+  <div>
+    <Greeting isLoggedIn = {isLoggedIn}/>
+    {isLoggedIn}
+      ? <LogoutButton onCLick = {handleLogoutClick}/>
+      : <LoginButton onClickj = {handleLoginClick}/>
+  </div>
 ```
 
-### 7.7 훅의 규칙
+  ### 9.4 컴포넌트 렌더링 막기
 
-- 첫 번째 규칙은 무조건 최상의 레벨에서만 호출해야 한다는 것. 여기서 최상위는 컴포넌트의 최상위 레벨을 의미
-- 따라서 반복문이나 조건문 또는 중첩된 함수들 안에서 훅을 호출하면 안됨.
-- 이 규칙에 따라서 훅은 컴포넌트가 렌더링 될 때마다 같은 순서로 호출되어야 함.
-- 페이지 224의 코드는 조건에 따라 호출됨으로 잘못된 코드
-- 두번 째 규칙은 리액트 함수형 컴포넌트에서만 훅을 호출해야 한다는 것임.
-- 따라서 일반 자바스크립트 함수에서 훅을 호출하면 안됨.
-- 훅은 리액트의 함수형 컴포넌트 혹은 직접 만든 커스텀 훅에서만 호출할 수 있음.
-- 두 번째 규칙은 함수형 컴포넌트에서만 훅을 호출해야 함.
-- 따라서 일반 자바스크립트 함수에서 훅을 호출하면 안 됨.
-- 훅은 함수영 컴포넌트 혹은 직접 만든 커스텀 훅에서만 호출 가능
+  - 컴포넌트를 렌더링하고 싶지 않을 떄에는 null을 리턴.
+  ```js
+    function WarningBanner(props){
+      if(!props.warning){
+        return null;
+      }
+
+      return(
+        <div>경고!</div>
+      );
+    }
+  ```
+# 5월 1일 강의 내용 정리 (7주차)
 
 ### 7.8 나만의 훅 만들기
 
@@ -305,6 +264,199 @@ const refContainer = useRef(초깃값);
 23    }
 24  }
 ```
+
+- 클래스형을 함수형으로 바꾸면 다음과 같습니다.
+- 함수형에서 이벤트 핸들러를 정의하는 방법은 두 가지 입니다.
+- 함수형에서 this를 사용하지 않고, onClick에서 바로 HandleClick를 넘기면 됩니다.
+
+```js
+  function Toggle(props){
+      const [isToggleOn, setIsToggleOn] = useState(true)
+      
+      //방법 1
+      function handleClick(){
+        setIsToggleOn((isToggleOn) => !isToggleOn);
+      }
+
+      //방법 2
+      const handleClick = () => {
+        setIsToggleOn((isToggleOn) => !isToggleOn) 
+      }
+      return(
+        <button onClick = {handleClick}>
+          {isToggleOn ? "켜짐" : "꺼짐"}
+        </button>
+      )
+  }
+```
+# 4월 17일 강의 내용 정리 (5주차)
+
+## 훅
+
+### 7.1 훅이란?
+
+- 클래스형 컴포넌트에서는 생성자(constructor)에서 state를 정의하고, setState() 함수를 통해 state를 업데이트.
+- 예전에 사용하던 함수형 컴포넌트는 별도로 state를 정의하거나, 컴포넌트의 생명주기에 맞춰서 어떤 코드가 실행되도록 할 수 없었습니다.
+- 함수형 컴포넌트에서도 state나 생명주기 함수의 기능을 사용하게 해주기 위해 추가된 기능이 바로 훅(Hook).
+- 함수형 컴포넌트도 훅을 사용하여 클래스형 컴포넌트의 기능을 모두 통일하게 구현할 수 있게 됨.
+- Hook이란 state와 생명주기 기능에 갈고리를 걸어 원하는 시점에 정해진 함수를 실행되도록 만든 함수.
+- 훅의 이름은 모두 'use'로 시작
+- 사용자 정의 훅(custom hook)을 만들 수 있으며, 이 경우에 이름은 'use'로 시작할 것을 권장
+
+### 7.2 useState
+
+- useState는 함수형 컴포넌트에서 state를 사용하기 위한 Hook임.
+- 다음 예제는 버튼을 클릭할 때마다 카운트가 증가하는 함수형 컴포넌트.
+- 하지만 증가는 가능하지만 증가할 때마다 재 렌더링은 일어나지 않음.
+- 이럴 때 state를 사용해야 하지만 함수형은 없기에 useState() 사용.
+
+```js
+01  import React, {useState} from "react";
+02
+03  function Counter(props){
+04    const [count, setCount] = useState(0);
+05
+06    return (
+07      <div>
+08        <p> 총 {count}번 클릭했습니다.</p>
+09        <button onClick ={() => count++}>
+10            클릭
+11        </button>
+12      </div>
+13    );
+14  }
+```
+
+### 7.3 useEffect
+
+- useState와 함께 가장 많이 사용하는 Hook임
+- 이 함수는 사이드 이펙트를 수행하기 위한 것
+- 영어로 side effect는 부작용을 의미함, 일반적으로 프로그래밍에서 사이드 이펙트는 '개발자가 의도하지 않은 코드가 실행되며 버그가 발생하는 것'을 뜻함
+- 하지만 리액트에서는 효과 또는 영향을 뜻하는 effect의 의미에 가까움
+- 예를 들어 서버에서 데이터를 받아오거나 수동으로 DOM을 변경하는 등의 작업을 의미
+- 이 작업을 이펙트라고 부르는 이유는 이 작업들이 다른 컴포넌트에 영향을 미칠 수 있으며, 렌더링중에는 작업이 완료될 수 없기 때문임. 렌더링이 끝난 이후에 실행되어야 하는 작업들임.
+- 클래스 컴포넌트의 생명주기 함수와 같은 기능을 하나로 통합한 기능을 제공
+- 저자는 useEffect가 side effect가 아니라 effect에 가깝다고 설명하지만, 이것은 부작용의 의미를 잘못 해석해서 생긴 오해이다. 부작용의 부를 不(아닐 부)로 생각했기 때문이다
+- side Effect는 '원래의 용도 혹은 목적의 효과외에, 부수적으로 다른 효과가 있는 것'을 뜻함
+- 결국 sideEffect는 렌더링 외에 실행해야 하는 부수적인 코드를 말함.
+- 예를 들면 네트워크 리퀘스트, DOM 수동 조작, 로깅등은 정리(clean-up)가 필요 없는 경우들
+- useEffect()함수는 다음과 같이 사용
+- 첫 번째 파라미터는 이펙트 함수가 들어가고, 두 번째 파라미터로는 의존성 배열이 들어감.
+```js
+01 useEffect(이펙트 함수, 의존성 배열);
+```
+- 의존성 배열은 이펙트가 의존하고 있는 배열로, 배열 안에 있는 변수중에 하나라도 값이 변경되었을 때 이펙트 함수가 실행됨.
+- 이펙트 함수는 처음 컴포넌트가 렌더링 된 이후, 그리고 재 렌더링 이후에 실행됨.
+- 만약 이펙트 함수가 마운트와 언마운트 될 때만 한 번씩 실행되게 하고 싶으면 빈 배열을 넣으면 됨. 이 경우 props나 state에 있는 어떤 값에도 의존하기 않기 때문에 여러 번 실행되지 않음.
+
+- componentUseWill
+![image](https://github.com/Raebagi/react1-1/assets/144668955/7aed0502-454f-40e7-ad2f-0d9026f49322)
+
+```js
+  useEffect(() => {
+    // 컴포넌트가 마운트 된 이후,
+    // 의존성 배열에 있는 변수들 중 하나라도 값이 변경되었을 때 실행
+    // 의존성 배열에 빈 배열을 넣으면 마운트와 언마운트시에 단 한번씩만 실행됨
+    // 의존성 배열 생략 시 컴포넌트 업데이트 시마다 실행됨
+    ...
+
+    return () => {
+      // 컴포넌트가 마운트 해제되기 전에 실행됨
+      ...
+    }
+  }, [의존성 변수1, 의존성 변수2, ...]
+  );
+```
+
+
+### 7.4 useMemo
+
+- useMemo()훅은 Memoized value를 리턴하는 훅.
+- 이전 계산값을 갖고있기 때문에 연산량이 많은 작업의 반복을 피함.
+- 이 훅은 렌더링이 일어나는 동안 실행됨.
+- 따라서 렌더링이 일어나는 동안 실행되선 안될 작업을 넣으면 안됨.
+- 예를 들면 useEffect에서 실행되어야 할 사이드 이펙트같은 것.
+- 정리하자면
+```js
+  const MemoizedValue = useMemo(
+    () => {
+    // 연산량이 높은 작업을 수행하여 결과를 반환
+    return computeExpensiveValue(의존성 변수1, 의존성 변수2);
+  },
+  [의존성 변수1, 의존성 변수2]
+  );
+```
+- 다음 코드와 같이 의존성 배열을 넣지 않을 경우, 렌더링이 일어날 때마다 매번 함수가 실행됨.
+- 따라서 의존성 배열을 넣지 않는 것은 의미가 없음.
+- 만약 빈 배열을 넣게되면 컴포넌트 마운트 시에만 함수가 실행됨.
+```js
+01  const MemoizedValue = useMemo(
+02    () =>  computeExpensiveValue
+03  );
+```
+
+### 7.5 useCallback
+
+- useCallback() 훅은 useMemo()와 유사한 역할을 합니다.
+- 차이점은 값이 아닌 함수를 반환한다는 점입니다.
+- 의존성 배열을 파라미터로 받는 것은 useMemo와 동일함.
+- 파라미터로 받은 함수를 콜백이라고 함.
+- useMemo와 마찬가지로 의존성 배열 중 하나라도 변경되면 콜백함수를 반환
+
+```js
+  const MemoizedValue = useCallback(
+    () => {
+      doSomething(의존성 변수1, 의존성 변수2);
+    },
+    [의존성 변수1, 의존성 변수2]
+  );
+```
+
+### 7.6 useRef
+
+- useRef() 혹은 레퍼런스를 사용하기 위한 훅.
+- 레퍼런스란 특정 컴포넌트에 접근할 수 있는 객체를 의미
+- useRef() 훅은 바로 이 레퍼런스 객체를 반환함.
+- 레퍼런스 객체에는 .current라는 속성이 있는데, 이것은 현재 참조하고 있는 엘리먼트를 의미함.
+```js
+const refContainer = useRef(초깃값);
+```
+- 이렇게 반환된 레퍼런스 객체는 컴포넌트의 라이프타임 전체에 걸쳐서 유지됨.
+- 즉, 컴포넌트가 마운트 해제 전까지는 계속 유지된다는 의미.
+
+- 예시
+```js
+01  import React, {useRef} from "react"
+02  
+03  export default function FocusButton(props){
+04    const inputElem = useRef(null)
+05
+06    const onButtonClick = () => {
+07      inputElem.current.focus()
+08    }
+09    return(
+10        <>
+11          <input ref = {inputElem} type = "text"/>
+12          <button onClick = {onButtonClick}>Focus the input</button>
+13        </>
+14    )
+15  }
+```
+
+### 7.7 훅의 규칙
+
+- 첫 번째 규칙은 무조건 최상의 레벨에서만 호출해야 한다는 것. 여기서 최상위는 컴포넌트의 최상위 레벨을 의미
+- 따라서 반복문이나 조건문 또는 중첩된 함수들 안에서 훅을 호출하면 안됨.
+- 이 규칙에 따라서 훅은 컴포넌트가 렌더링 될 때마다 같은 순서로 호출되어야 함.
+- 페이지 224의 코드는 조건에 따라 호출됨으로 잘못된 코드
+- 두번 째 규칙은 리액트 함수형 컴포넌트에서만 훅을 호출해야 한다는 것임.
+- 따라서 일반 자바스크립트 함수에서 훅을 호출하면 안됨.
+- 훅은 리액트의 함수형 컴포넌트 혹은 직접 만든 커스텀 훅에서만 호출할 수 있음.
+- 두 번째 규칙은 함수형 컴포넌트에서만 훅을 호출해야 함.
+- 따라서 일반 자바스크립트 함수에서 훅을 호출하면 안 됨.
+- 훅은 함수영 컴포넌트 혹은 직접 만든 커스텀 훅에서만 호출 가능
+
+
 # 4월 3일 강의 내용 정리 (4주차)
 
 ## 컴포넌트에 대해 알아보기
