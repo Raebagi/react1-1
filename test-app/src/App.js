@@ -1,16 +1,12 @@
-import logo from './logo.svg';
 import './App.css';
-import Notification  from './chaptor06/Notification';
-import NotificationList from './chaptor06/NotificationList';
-import Counter from './chaptor07/Counter';
-import FocusButton from './chaptor07/FocusButton';
+import MainPage from './MainPage';
+import LandingPage from './chaptor10/LandingPage';
+import NumberList from './chaptor10/NumbeList';
 
 function App() {
   return (
     <div className="App">
-      <FocusButton/>
-      {/*<Counter/>      */}
-      {/* <NotificationList/> */}
+      <NumberList/>
     </div>
   );
 }
